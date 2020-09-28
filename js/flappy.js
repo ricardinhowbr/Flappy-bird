@@ -127,3 +127,39 @@ function Passaro(alturaJogo) {
 //     b.animar();
 //     passaro.animar();
 // }, 20);
+
+function Progresso() {
+    this.elemento = novoElemento('span', 'progresso');
+
+    this.atualizarPontos = pontos => {
+        this.elemento.innerHTML = pontos;
+    }
+
+    this.atualizarPontos(0);
+}
+
+function estaoSobrepostos(elementoA, elementoB) {
+    const a = elementoA.getBoundingClientRect();
+    const b = elementoB.getBoundingClientRect();
+
+    const vertical = a.top + a.height >= b.top && b.top + b.height >= a.top;
+    const horizontal = a.left + a.width >= b.left && b.left + b.width >= a.left;
+
+    return vertical && horizontal;
+}
+
+function colidiu(passaro, barreiras) {
+    let colidiu = false;
+
+    barreiras.pares.forEach(parDeBarreiras => {
+        if(!colidiu) {
+            const superior = parDeBarreiras.superior.elemento;
+            const inferior = parDeBarreiras.inferior.elemento;
+            const piso = passaro.getY();
+
+            colidiu = estaoSobrepostos(passaro.elemento, superior) || estaoSobrepostos(passaro.elemento, inferior) || (piso === 0);
+        }
+    });
+
+    return colidiu;
+}
