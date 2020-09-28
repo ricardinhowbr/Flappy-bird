@@ -163,3 +163,58 @@ function colidiu(passaro, barreiras) {
 
     return colidiu;
 }
+
+function FlappyBird() {
+    this.pontos = 0;
+
+    const areaDoJogo = document.querySelector('[wm-flappy]');
+
+    const altura = areaDoJogo.clientHeight;
+    const largura = areaDoJogo.clientWidth;
+
+    const progresso = new Progresso();
+    const barreiras = new CriarBarreiras(altura, largura, 250, 400, 
+        () => progresso.atualizarPontos(++this.pontos));
+
+    const passaro = new Passaro(altura);
+
+    areaDoJogo.appendChild(progresso.elemento);
+    areaDoJogo.appendChild(passaro.elemento);
+    barreiras.pares.forEach(par => areaDoJogo.appendChild(par.elemento));
+
+    this.start = () => {
+        // -> loop do jogo
+
+        const temporizador = setInterval(() => {
+            barreiras.animar();
+            passaro.animar();
+
+            if(colidiu(passaro, barreiras)) {
+                clearInterval(temporizador);
+                showPainelResultado(this.pontos);
+            }
+        }, 20);
+    }
+}
+
+function showPainelResultado(pontos) {
+    const pontuacaoFinal = document.querySelector('[wm-pontuacao]');
+    const btnReiniciar = document.querySelector('[wm-reiniciar]');
+    const painelResultado = document.querySelector('.painel-resultado');
+
+    btnReiniciar.onclick = () => {
+        const areaDoJogo = document.querySelector('[wm-flappy]');
+        areaDoJogo.innerHTML = '';
+
+        painelResultado.style.visibility = 'hidden';
+        new FlappyBird().start();
+    }
+
+    pontuacaoFinal.innerHTML = `Pontuação: ${pontos}pts`;
+    painelResultado.style.visibility =  'visible';
+}
+
+const painelResultado = document.querySelector('.painel-resultado');
+painelResultado.style.visibility = 'hidden';
+
+new FlappyBird().start();
